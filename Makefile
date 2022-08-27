@@ -16,8 +16,12 @@ vet: lint
 dev: vet
 	@reflex -r '.go' -s -- go run cmd/main.go
 
-swagger:
+swagger: vet
 	 ./start.sh
 .PHONY:swagger
+
+start:
+	 docker-compose up --build -d
+.PHONY:start
 
 
