@@ -1,6 +1,17 @@
-# Boilerplate
+# Rock, Paper, Scissor, Spock, Lizard
 
-Company service manages everything that has to do with a company.
+Sam invented this game (with Karen Bryla) because it seems like when you know someone well enough, 
+75-80% of any Rock-Paper-Scissors games you play with that person end up in a tie. Well, here is a slight 
+variation that reduces that probability. (Note that for those of you who like to swing your fist back and 
+forth and say, "Rock, Paper, Scissors, GO!", might want to continue to do that, replacing "Rock" with "One," 
+"Paper" with "Two," and "Scissors" with "Three.") This version is also nice because it satisfies the Law of
+Fives.
+
+
+### Links
+- [How to play the game](https://www.youtube.com/watch?v=zjoVuV8EeOU)
+- [Big Bang Theory](https://www.youtube.com/watch?v=x5Q6-wMx-K8&t=49s)
+
 
 ## Built with:
 - [Golang](https://go.dev/dl/)

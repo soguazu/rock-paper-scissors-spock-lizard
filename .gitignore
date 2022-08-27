@@ -4,3 +4,4 @@ logs/
 docs
 .idea/
 .DS_Store
+.env
