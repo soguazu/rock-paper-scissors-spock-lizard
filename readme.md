@@ -7,7 +7,7 @@ forth and say, "Rock, Paper, Scissors, GO!", might want to continue to do that, 
 "Paper" with "Two," and "Scissors" with "Three.") This version is also nice because it satisfies the Law of
 Fives.
 
-![](../../../Desktop/Screenshot 2022-08-27 at 21.17.29.png)
+![](./img.png)
 
 ### Links
 - [How to play the game](https://www.youtube.com/watch?v=zjoVuV8EeOU)
