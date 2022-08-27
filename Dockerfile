@@ -1,14 +1,22 @@
-FROM golang:1.10 AS build
-WORKDIR /go/src
-COPY go ./go
-COPY main.go .
+FROM golang:latest
 
-ENV CGO_ENABLED=0
-RUN go get -d -v ./...
+LABEL maintainer="Grey <soguazu@gmail.com>"
 
-RUN go build -a -installsuffix cgo -o swagger .
+WORKDIR /app
+COPY go.mod .
+COPY go.sum .
 
-FROM scratch AS runtime
-COPY --from=build /go/src/swagger ./
-EXPOSE 8080/tcp
-ENTRYPOINT ["./swagger"]
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN go mod download golang.org/x/lint
+RUN go install golang.org/x/lint/golint@latest
+
+RUN rm -rf docs && swag init -g cmd/main.go
+RUN go mod download
+
+COPY . .
+
+RUN go build -o server cmd/main.go
+
+CMD ["./server"]
+
+

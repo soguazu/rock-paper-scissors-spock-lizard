@@ -13,7 +13,7 @@ Company service manages everything that has to do with a company.
 Use the package manager [go modules](https://go.dev/blog/using-go-modules) to install all dependencies.
 
 ```bash
-git clone https://github.com/soguazu/boilerplate_golang
+git clone https://game
 ```
 
 ```bash

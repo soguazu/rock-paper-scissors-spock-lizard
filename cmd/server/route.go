@@ -2,9 +2,9 @@ package server
 
 import (
 	"fmt"
+	"game/internals/core/ports"
+	"game/pkg/config"
 	"github.com/gin-gonic/gin"
-	"github.com/soguazu/boilerplate_golang/internals/core/ports"
-	"github.com/soguazu/boilerplate_golang/pkg/config"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
@@ -46,7 +46,6 @@ func (g *ginRouter) GROUP(path string) *gin.RouterGroup {
 func (g *ginRouter) SERVE() error {
 	var port int
 	if config.Instance.Port != nil {
-
 		p, err := strconv.Atoi(*config.Instance.Port)
 		if err != nil {
 			log.Fatal("Error parsing port, must be numeric")

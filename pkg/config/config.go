@@ -5,12 +5,8 @@ type Env string
 
 // Config is the configuration struct
 type Config struct {
-	Port        *string `env:"PORT"`
-	JWTSecret   string  `env:"JWT_SECRET"`
-	DatabaseURL string  `env:"DATABASE_URL"`
-	RedisURL    string  `env:"REDIS_URL"`
-	Env         string  `env:"ENV"`
-	ElasticURL  string  `env:"ELASTIC_URL"`
+	Port *string `env:"PORT"`
+	Env  string  `env:"ENV"`
 }
 
 // GetEnv returns the current environment

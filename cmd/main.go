@@ -1,10 +1,8 @@
 package main
 
 import (
-	"github.com/soguazu/boilerplate_golang/cmd/server"
-	_ "github.com/soguazu/boilerplate_golang/docs"
-	"github.com/soguazu/boilerplate_golang/pkg/database"
-	"log"
+	"game/cmd/server"
+	_ "game/docs"
 )
 
 // @title Evea Core Business Swagger API
@@ -20,11 +18,5 @@ import (
 
 // @BasePath /v1
 func main() {
-	var DBConnection = database.NewDatabase()
-	err := server.Run(DBConnection)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
 	server.Injection()
 }
