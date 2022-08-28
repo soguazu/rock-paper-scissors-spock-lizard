@@ -20,6 +20,10 @@ swagger: vet
 	 ./start.sh
 .PHONY:swagger
 
+run:
+	@reflex -r '.go' -s -- go run cmd/main.go
+.PHONY:run
+
 start:
 	 docker-compose up --build -d
 .PHONY:start

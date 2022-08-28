@@ -5,13 +5,13 @@ import (
 	_ "game/docs"
 )
 
-// @title Evea Core Business Swagger API
+// @title Rock Paper Scissors Spock Lizard Swagger API
 // @version 1.0
-// @description Evea Core Business Swagger API.
+// @description Rock Paper Scissors Spock Lizard Swagger API.
 // @termsOfService http://swagger.io/terms/
 
-// @contact.name Evea Team API Support
-// @contact.email info@evea.com
+// @contact.name Team API Support
+// @contact.email cuguazu@gmail.com
 
 // @license.name MIT
 // @license.url https://github.com/sguazu
