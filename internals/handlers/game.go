@@ -36,20 +36,18 @@ func NewGameHandler(cs ports.IGameService, n string) ports.IGameHandler {
 // @Tags         game
 // @Accept       json
 // @Produce      json
-// @Param PlayId header string false "Player ID"
 // @Success      200  {object}  dto.GetChoices
 // @Failure      400  {object}  dto.Error
 // @Failure      404  {object}  dto.Error
 // @Failure      500  {object}  dto.Error
 // @Router       /choices [get]
 func (g *GameHandler) GetChoices(c *gin.Context) {
-	g.GameService.InitializeScoreboard(c.Request.Header["Playid"])
 	choices, err := g.GameService.GetChoices()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, result.ReturnErrorResult(err.Error()))
 		return
 	}
-	c.JSON(http.StatusOK, result.ReturnSuccessResult(choices, message.GetResponseMessage(g.handlerName, types.OKAY)))
+	c.JSON(http.StatusOK, choices)
 }
 
 // GetRandomChoice godoc
@@ -58,7 +56,6 @@ func (g *GameHandler) GetChoices(c *gin.Context) {
 // @Tags         game
 // @Accept       json
 // @Produce      json
-// @Param PlayId header string false "Player ID"
 // @Success      200  {object}  dto.GetChoice
 // @Failure      500  {object}  dto.Error
 // @Router       /choice [get]
@@ -68,7 +65,7 @@ func (g *GameHandler) GetRandomChoice(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, result.ReturnErrorResult(err.Error()))
 		return
 	}
-	c.JSON(http.StatusOK, result.ReturnSuccessResult(choice, message.GetResponseMessage(g.handlerName, types.OKAY)))
+	c.JSON(http.StatusOK, choice)
 }
 
 // Play godoc
@@ -77,27 +74,25 @@ func (g *GameHandler) GetRandomChoice(c *gin.Context) {
 // @Tags         game
 // @Accept       json
 // @Produce      json
-// @Param PlayId header string false "Player ID"
 // @Param game body dto.PlayRequest true "play"
 // @Success      200  {object}  dto.PlayResponse
 // @Failure      400  {object}  dto.Error
 // @Failure      500  {object}  dto.Error
 // @Router       /play [post]
 func (g *GameHandler) Play(c *gin.Context) {
-	g.GameService.InitializeScoreboard(c.Request.Header["Playid"])
 	var body dto.PlayRequest
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, result.ReturnErrorResult(err.Error()))
 		return
 	}
 
-	winner, err := g.GameService.Play(body.Choice)
+	winner, err := g.GameService.Play(body.Player)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, result.ReturnErrorResult(err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusCreated, result.ReturnSuccessResult(winner, message.GetResponseMessage(g.handlerName, types.OKAY)))
+	c.JSON(http.StatusCreated, winner)
 }
 
 // GetScoreboard godoc
@@ -106,24 +101,12 @@ func (g *GameHandler) Play(c *gin.Context) {
 // @Tags         game
 // @Accept       json
 // @Produce      json
-// @Param PlayId header string false "Player ID"
 // @Success      200  {object}  dto.GetResponse
 // @Failure      400  {object}  dto.Error
 // @Failure      500  {object}  dto.Error
 // @Router       /scoreboard [get]
 func (g *GameHandler) GetScoreboard(c *gin.Context) {
-
-	if len(c.Request.Header["Playid"]) < 1 {
-		c.JSON(http.StatusBadRequest, result.ReturnErrorResult("invalid player id"))
-		return
-	}
-
-	scoreboard, err := g.GameService.GetScoreboard((c.Request.Header["Playid"])[0])
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, result.ReturnErrorResult(err.Error()))
-		return
-	}
-
+	scoreboard := g.GameService.GetScoreboard()
 	c.JSON(http.StatusCreated, result.ReturnSuccessResult(scoreboard, message.GetResponseMessage(fmt.Sprintf("%v score", g.handlerName), types.OKAY)))
 }
 
@@ -133,22 +116,11 @@ func (g *GameHandler) GetScoreboard(c *gin.Context) {
 // @Tags         game
 // @Accept       json
 // @Produce      json
-// @Param PlayId header string false "Player ID"
 // @Success      200  {object}  dto.GetResponse
 // @Failure      400  {object}  dto.Error
 // @Failure      500  {object}  dto.Error
 // @Router       /reset-scoreboard [get]
 func (g *GameHandler) ResetScoreboard(c *gin.Context) {
-	if len(c.Request.Header["Playid"]) < 1 {
-		c.JSON(http.StatusBadRequest, result.ReturnErrorResult("invalid player id"))
-		return
-	}
-
-	err := g.GameService.ResetScoreboard(c.Request.Header["Playid"][0])
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, result.ReturnErrorResult(err.Error()))
-		return
-	}
-
+	g.GameService.ResetScoreboard()
 	c.JSON(http.StatusCreated, result.ReturnBasicResult(message.GetResponseMessage(fmt.Sprintf("%v score", g.handlerName), types.UPDATED)))
 }

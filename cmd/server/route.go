@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"game/internals/core/ports"
+	"game/internals/middleware"
 	"game/pkg/config"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -18,6 +19,7 @@ type ginRouter struct {
 
 // NewGinRouter creates an instance of the gin router
 func NewGinRouter(r *gin.Engine) ports.IRouter {
+	r.Use(middleware.CORS())
 	return &ginRouter{
 		r,
 	}
@@ -55,6 +57,7 @@ func (g *ginRouter) SERVE() error {
 
 	g.router.Use(gin.Logger())
 	g.router.Use(gin.Recovery())
+
 	if err := g.router.SetTrustedProxies([]string{"127.0.0.1"}); err != nil {
 		return err
 	}

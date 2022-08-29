@@ -7,12 +7,11 @@ import (
 
 // IGameService defines the interface for game service
 type IGameService interface {
-	GetChoices() (dto.GetChoices, error)
-	GetRandomChoice() (string, error)
-	Play(choice string) (*string, error)
-	InitializeScoreboard(playerId []string)
-	GetScoreboard(playerId string) (*dto.GetScoreboard, error)
-	ResetScoreboard(playerId string) error
+	GetChoices() ([]dto.Choices, error)
+	GetRandomChoice() (*dto.Choices, error)
+	Play(choice int) (*dto.PlayResponse, error)
+	GetScoreboard() []dto.PlayResponse
+	ResetScoreboard()
 }
 
 // IGameHandler defines the interface for game handler

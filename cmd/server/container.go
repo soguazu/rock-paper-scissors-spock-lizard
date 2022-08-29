@@ -1,6 +1,7 @@
 package server
 
 import (
+	dto "game/internals/DTO"
 	"game/internals/core/services"
 	"game/internals/handlers"
 	"game/pkg/config"
@@ -18,12 +19,12 @@ func Injection() {
 
 	var (
 		ginRoutes   = NewGinRouter(gin.Default())
-		gameService = services.NewGameService(services.Scoreboard{})
+		gameService = services.NewGameService(services.Scoreboard{Score: []dto.PlayResponse{}})
 		gameHandler = handlers.NewGameHandler(gameService, "Game")
 	)
 
-	v1 := ginRoutes.GROUP("v1")
-	game := v1.Group("/")
+	group := ginRoutes.GROUP("")
+	game := group.Group("/")
 	game.GET("/choices", gameHandler.GetChoices)
 	game.GET("/choice", gameHandler.GetRandomChoice)
 	game.GET("/scoreboard", gameHandler.GetScoreboard)

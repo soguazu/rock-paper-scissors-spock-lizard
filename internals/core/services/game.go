@@ -3,30 +3,24 @@ package services
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	dto "game/internals/DTO"
 	"game/internals/core/ports"
 	"game/pkg/utils"
 	uuid "github.com/satori/go.uuid"
-	"strings"
 )
 
-var choices = []string{"rock", "paper", "scissors", "spock", "lizard"}
-
-// Player datastore
-type Player struct {
-	ID    *string
-	Score int
-}
-
-// Computer datastore
-type Computer struct {
-	Score int
+var choices = []dto.Choices{
+	{Name: "rock", Id: 1},
+	{Name: "paper", Id: 2},
+	{Name: "scissors", Id: 3},
+	{Name: "spock", Id: 4},
+	{Name: "lizard", Id: 5},
 }
 
 // Scoreboard datastore
 type Scoreboard struct {
-	Player
-	Computer
+	Score []dto.PlayResponse
 }
 
 // GameService service
@@ -40,49 +34,39 @@ func NewGameService(scoreboard Scoreboard) ports.IGameService {
 }
 
 // GetChoices returns all the choices
-func (g *GameService) GetChoices() (dto.GetChoices, error) {
-	return dto.GetChoices{
-		Choices: choices,
-		Token:   *g.Scoreboard.Player.ID,
-	}, nil
+func (g *GameService) GetChoices() ([]dto.Choices, error) {
+	return choices, nil
 }
 
 // GetRandomChoice returns random selected choice
-func (g *GameService) GetRandomChoice() (string, error) {
+func (g *GameService) GetRandomChoice() (*dto.Choices, error) {
 	randomNumber, err := g.getRandomNumber()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return choices[randomNumber], nil
+
+	return &choices[randomNumber-1], nil
 }
 
 // Play starts the game
-func (g *GameService) Play(playerChoice string) (*string, error) {
+func (g *GameService) Play(playerChoice int) (*dto.PlayResponse, error) {
 	computerChoice, err := g.GetRandomChoice()
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := g.getWinner(playerChoice, computerChoice)
+	result, err := g.getWinner(playerChoice, computerChoice.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &result, nil
-}
 
-// InitializeScoreboard starts the game
-func (g *GameService) InitializeScoreboard(Id []string) {
-	playerId := g.validatePlayerId(Id)
-	if g.Scoreboard.Player.ID != nil && *g.Scoreboard.Player.ID == playerId {
-		return
+	score := dto.PlayResponse{
+		Results: result,
+		Player:  playerChoice,
 	}
+	g.updateScoreboard(score)
 
-	g.Scoreboard = Scoreboard{
-		Player{
-			ID: &playerId,
-		},
-		Computer{},
-	}
+	return &score, nil
 }
 
 func (g *GameService) validatePlayerId(playerId []string) string {
@@ -119,7 +103,7 @@ func (g *GameService) getRandomNumber() (int, error) {
 		return 0, err
 	}
 
-	for randomNumber.RandomNumber >= 5 {
+	for randomNumber.RandomNumber > 5 {
 		randomNumber.RandomNumber = randomNumber.RandomNumber / 2
 	}
 	return randomNumber.RandomNumber, nil
@@ -137,27 +121,38 @@ func (g *GameService) getRules() map[string][]string {
 }
 
 // getRules a function that returns the rules of the game
-func (g *GameService) getWinner(playerChoice, computerChoice string) (string, error) {
-
-	if playerChoice == "" || !g.contains(choices, strings.ToLower(playerChoice)) {
+func (g *GameService) getWinner(playerChoice, computerChoice int) (string, error) {
+	fmt.Println(playerChoice, "****")
+	if playerChoice < 1 || playerChoice > 5 {
 		return "", errors.New("invalid choice")
 	}
 
+	if computerChoice < 0 {
+		computerChoice = 1
+	}
+
 	if playerChoice == computerChoice {
-		return "It's a tie", nil
+		return "tie", nil
 	}
 
 	rules := g.getRules()
-	if choices, ok := rules[strings.ToLower(playerChoice)]; ok && g.contains(choices, computerChoice) {
-		g.updateScoreboard(g.Scoreboard.Player.ID)
-		return "player wins", nil
+	if selected, ok := rules[choices[playerChoice-1].Name]; ok && g.containsSelected(selected, choices[computerChoice-1].Name) {
+		return "wins", nil
 	}
 
-	g.updateScoreboard(nil)
-	return "computer wins", nil
+	return "lose", nil
 }
 
-func (g *GameService) contains(choices []string, searchTerm string) bool {
+func (g *GameService) contains(choices []dto.Choices, searchTerm int) bool {
+	for _, choice := range choices {
+		if choice.Id == searchTerm {
+			return true
+		}
+	}
+	return false
+}
+
+func (g *GameService) containsSelected(choices []string, searchTerm string) bool {
 	for _, choice := range choices {
 		if choice == searchTerm {
 			return true
@@ -166,32 +161,19 @@ func (g *GameService) contains(choices []string, searchTerm string) bool {
 	return false
 }
 
-func (g *GameService) updateScoreboard(player *string) {
-	if player != nil {
-		g.Scoreboard.Player.Score++
-	} else {
-		g.Scoreboard.Computer.Score++
-	}
+func (g *GameService) updateScoreboard(scoreboard dto.PlayResponse) {
+	g.Scoreboard.Score = append(g.Scoreboard.Score, scoreboard)
 }
 
 // GetScoreboard persist the score of the game
-func (g *GameService) GetScoreboard(playerId string) (*dto.GetScoreboard, error) {
-	if g.Scoreboard.Player.ID == nil || *g.Scoreboard.Player.ID != playerId {
-		return nil, errors.New("invalid player id")
+func (g *GameService) GetScoreboard() []dto.PlayResponse {
+	if len(g.Scoreboard.Score) > 10 {
+		return g.Scoreboard.Score[0:10]
 	}
-	return &dto.GetScoreboard{
-		PlayerScore:   g.Scoreboard.Player.Score,
-		ComputerScore: g.Scoreboard.Computer.Score,
-	}, nil
+	return g.Scoreboard.Score
 }
 
 // ResetScoreboard persist the score of the game
-func (g *GameService) ResetScoreboard(playerId string) error {
-	if g.Scoreboard.Player.ID == nil || *g.Scoreboard.Player.ID != playerId {
-		return errors.New("invalid player id")
-	}
-
-	g.Scoreboard.Player.Score = 0
-	g.Scoreboard.Computer.Score = 0
-	return nil
+func (g *GameService) ResetScoreboard() {
+	g.Scoreboard.Score = []dto.PlayResponse{}
 }

@@ -16,7 +16,7 @@ import (
 // @license.name MIT
 // @license.url https://github.com/sguazu
 
-// @BasePath /v1
+// @BasePath /
 func main() {
 	server.Injection()
 }

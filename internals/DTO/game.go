@@ -8,14 +8,13 @@ type GetBasicMessage struct {
 
 // PlayRequest dto to play
 type PlayRequest struct {
-	Choice string `json:"choice"`
+	Player int `json:"player"`
 }
 
 // PlayResponse dto to play request response
 type PlayResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Data    string `json:"data"`
+	Results string `json:"results"`
+	Player  int    `json:"player"`
 }
 
 // GetResponse dto to get all choices
@@ -27,7 +26,7 @@ type GetResponse struct {
 
 // GetChoices dto
 type GetChoices struct {
-	Choices interface{}
+	Choices interface{} `json:"name"`
 	Token   string
 }
 
@@ -53,4 +52,9 @@ type Error struct {
 // GetRandomNumber struct
 type GetRandomNumber struct {
 	RandomNumber int `json:"random_number"`
+}
+
+type Choices struct {
+	Name string `json:"name"`
+	Id   int    `json:"id"`
 }
