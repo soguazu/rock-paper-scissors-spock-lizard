@@ -18,11 +18,22 @@ type PlayResponse struct {
 	Data    string `json:"data"`
 }
 
-// GetChoices dto to get all choices
+// GetResponse dto to get all choices
+type GetResponse struct {
+	Success bool        `json:"success"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"choices"`
+}
+
+// GetChoices dto
 type GetChoices struct {
-	Success bool     `json:"success"`
-	Message string   `json:"message"`
-	Choices []string `json:"choices"`
+	Choices interface{}
+	Token   string
+}
+
+type GetScoreboard struct {
+	PlayerScore   int
+	ComputerScore int
 }
 
 // GetChoice dto to get random choice
@@ -37,4 +48,9 @@ type Error struct {
 	Success bool        `json:"success"`
 	Message string      `json:"message,omitempty"`
 	Error   interface{} `json:"error,omitempty"`
+}
+
+// GetRandomNumber struct
+type GetRandomNumber struct {
+	RandomNumber int `json:"random_number"`
 }

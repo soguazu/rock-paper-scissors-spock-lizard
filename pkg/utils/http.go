@@ -14,7 +14,7 @@ import (
 // Client model request
 type Client struct {
 	BaseURL string
-	Header  map[string]string
+	Headers map[string]string
 }
 
 // GET method for carrying out get request
@@ -40,7 +40,7 @@ func (r *Client) GET(method, link string, params map[string]string) ([]byte, err
 		return nil, err
 	}
 
-	if len(r.Header) != 0 {
+	if len(r.Headers) != 0 {
 		r.SetHeader(req)
 	}
 
@@ -78,7 +78,7 @@ func (r *Client) CHANGE(method, url string, payload []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	if len(r.Header) > 0 {
+	if len(r.Headers) > 0 {
 		r.SetHeader(req)
 	}
 
@@ -108,7 +108,7 @@ func (r *Client) CHANGE(method, url string, payload []byte) ([]byte, error) {
 
 // SetHeader method for setting header
 func (r *Client) SetHeader(request *http.Request) {
-	for key, header := range r.Header {
+	for key, header := range r.Headers {
 		request.Header.Add(key, header)
 	}
 	return

@@ -18,14 +18,16 @@ func Injection() {
 
 	var (
 		ginRoutes   = NewGinRouter(gin.Default())
-		gameService = services.NewGameService()
-		gameHandler = handlers.NewGameHandler(gameService, "Company")
+		gameService = services.NewGameService(services.Scoreboard{})
+		gameHandler = handlers.NewGameHandler(gameService, "Game")
 	)
 
 	v1 := ginRoutes.GROUP("v1")
 	game := v1.Group("/")
 	game.GET("/choices", gameHandler.GetChoices)
 	game.GET("/choice", gameHandler.GetRandomChoice)
+	game.GET("/scoreboard", gameHandler.GetScoreboard)
+	game.GET("/reset-scoreboard", gameHandler.ResetScoreboard)
 	game.POST("/play", gameHandler.Play)
 
 	err = ginRoutes.SERVE()

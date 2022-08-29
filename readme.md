@@ -14,6 +14,10 @@ Fives.
 - [Big Bang Theory](https://www.youtube.com/watch?v=x5Q6-wMx-K8&t=49s)
 
 
+## NOTE 
+A user id is generated a returned to the client, please pass that id in the header as Playid, 
+it is used to keep track of the player
+
 ## Built with:
 - [Golang](https://go.dev/dl/)
 - [Docker](https://www.docker.com/products/docker-desktop/)
@@ -50,7 +54,7 @@ make swagger
 ### Visit [swagger docs](http://localhost:8085/swagger/index.html)
 
 ## Usage with docker compose
-
+### Note make sure you have docker running
 ```bash
 # To run build swagger docs and run the server
 make start

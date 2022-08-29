@@ -18,7 +18,7 @@ type Result struct {
 	Message string      `json:"message,omitempty"`
 	Error   interface{} `json:"error,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
-	Token   string      `json:"token,omitempty"`
+	Token   *string     `json:"token,omitempty"`
 	Count   int64       `json:"count,omitempty"`
 }
 
@@ -56,7 +56,7 @@ func (r *Result) ReturnBasicResult(data interface{}) Result {
 }
 
 // ReturnAuthResult returns both object and token
-func (r *Result) ReturnAuthResult(data interface{}, token string) Result {
+func (r *Result) ReturnAuthResult(data interface{}, token *string) Result {
 	return Result{
 		Success: true,
 		Token:   token,
